@@ -269,6 +269,12 @@ public class CheckersModel {
 								} else {
 									jumpDir.set(0, jumpDir.get(0) + 1);
 								}
+							}if(jumps>4){
+								if(row==pRow && col==pCol && currentJumps.get(2)==tempRow && currentJumps.get(3)==tempCol){
+									currentJumps.remove(currentJumps.size()-2);
+									currentJumps.remove(currentJumps.size()-1);
+									dir=4;
+								}
 							}
 							loc[0] = tempRow;
 							loc[1] = tempCol;
