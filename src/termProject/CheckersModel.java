@@ -1,20 +1,6 @@
 package termProject;
 
-import java.io.FileInputStream;
-import java.io.*;
-import java.io.FileNotFoundException;
-import java.awt.*;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.*;
-import java.awt.event.*;
-import java.util.*;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.util.ArrayList;
 
 /**
  * Class creates a virtual layout for the board and provides the game logic.
@@ -216,15 +202,15 @@ public class CheckersModel {
 	}
 
 	/**
-	 * Method calculates all possible jumps that require the most amount of
-	 * jumps and puts them in an arraylist
+	 * calculates all jumps that take the most jumps and puts them in an array
+	 * list.
 	 * 
 	 * @param p
 	 *            the current player
 	 * @return an arraylist of all possible jumps of which one has to be
 	 *         performed
 	 */
-	public ArrayList<ArrayList<Integer>> canJump(Player p) {
+	public final ArrayList<ArrayList<Integer>> canJump(final Player p) {
 		int jumps = 0;
 		int counter = -1;
 		int listCounter = 0;
@@ -233,8 +219,8 @@ public class CheckersModel {
 		ArrayList<Integer> jumpDir = new ArrayList<Integer>();
 		ArrayList<Integer> currentJumps = new ArrayList<Integer>();
 		ArrayList<ArrayList<Integer>> jumpList = new ArrayList<ArrayList<Integer>>();
-		for (int row = 0; row < 8; row++) {
-			for (int col = 0; col < 8; col++) {
+		for (int row = 0; row < BOARD_DIM; row++) {
+			for (int col = 0; col < BOARD_DIM; col++) {
 				this.piece = this.board[row][col];
 				if (this.piece == null) {
 					continue;
@@ -268,12 +254,6 @@ public class CheckersModel {
 									jumpDir.add(0, 1);
 								} else {
 									jumpDir.set(0, jumpDir.get(0) + 1);
-								}
-							}if(jumps>4){
-								if(row==pRow && col==pCol && currentJumps.get(2)==tempRow && currentJumps.get(3)==tempCol){
-									currentJumps.remove(currentJumps.size()-2);
-									currentJumps.remove(currentJumps.size()-1);
-									dir=4;
 								}
 							}
 							loc[0] = tempRow;
@@ -335,7 +315,7 @@ public class CheckersModel {
 
 	/**
 	 * Helper method that checks to see if a piece can continue to jump an
-	 * multiple times
+	 * multiple times.
 	 * 
 	 * @param play
 	 *            the current player
@@ -349,10 +329,12 @@ public class CheckersModel {
 	 *            the row that the player can't end up in
 	 * @param prevCol
 	 *            the column that the player can't end up in
+	 * @param direction
+	 *            direction in which the next piece is
 	 * @return an array of locations that are made up of multiple jumps
 	 */
-	public int[] checkForMoreJumps(Player play, boolean king, int direction, int startRow, int startCol, int prevRow,
-			int prevCol) {
+	public final int[] checkForMoreJumps(final Player play, final boolean king, final int direction, final int startRow,
+			final int startCol, final int prevRow, final int prevCol) {
 		int[] moves = { -1, 0 };
 		if (!king && (direction == 2 || direction == 3)) {
 			return moves;
@@ -374,7 +356,7 @@ public class CheckersModel {
 				break;
 
 			case 1:
-				if (startRow - 2 > -1 && startCol + 2 < 8) {
+				if (startRow - 2 > -1 && startCol + 2 < BOARD_DIM) {
 					if (startRow - 2 != prevRow || startCol + 2 != prevCol) {
 						if (this.getPiece(startRow - 1, startCol + 1) != null
 								&& this.getPiece(startRow - 1, startCol + 1).getPlayer() == Player.Red) {
@@ -388,7 +370,7 @@ public class CheckersModel {
 				break;
 
 			case 2:
-				if (startRow + 2 < 8 && startCol + 2 < 8) {
+				if (startRow + 2 < BOARD_DIM && startCol + 2 < BOARD_DIM) {
 					if (startRow + 2 != prevRow || startCol + 2 != prevCol) {
 						if (this.getPiece(startRow + 1, startCol + 1) != null
 								&& this.getPiece(startRow + 1, startCol + 1).getPlayer() == Player.Red) {
@@ -402,7 +384,7 @@ public class CheckersModel {
 				break;
 
 			case 3:
-				if (startRow + 2 < 8 && startCol - 2 > -1) {
+				if (startRow + 2 < BOARD_DIM && startCol - 2 > -1) {
 					if (startRow + 2 != prevRow || startCol - 2 != prevCol) {
 						if (this.getPiece(startRow + 1, startCol - 1) != null
 								&& this.getPiece(startRow + 1, startCol - 1).getPlayer() == Player.Red) {
@@ -414,12 +396,14 @@ public class CheckersModel {
 					}
 				}
 				break;
+//			default:
+//				break;
 
 			}
 		} else {
 			switch (direction) {
 			case 0:
-				if (startRow + 2 < 8 && startCol + 2 < 8) {
+				if (startRow + 2 < BOARD_DIM && startCol + 2 < BOARD_DIM) {
 					if (startRow + 2 != prevRow || startCol + 2 != prevCol) {
 						if (this.getPiece(startRow + 1, startCol + 1) != null
 								&& this.getPiece(startRow + 1, startCol + 1).getPlayer() == Player.Black) {
@@ -433,7 +417,7 @@ public class CheckersModel {
 				break;
 
 			case 1:
-				if (startRow + 2 < 8 && startCol - 2 > -1) {
+				if (startRow + 2 < BOARD_DIM && startCol - 2 > -1) {
 					if (startRow + 2 != prevRow || startCol - 2 != prevCol) {
 						if (this.getPiece(startRow + 1, startCol - 1) != null
 								&& this.getPiece(startRow + 1, startCol - 1).getPlayer() == Player.Black) {
@@ -461,7 +445,7 @@ public class CheckersModel {
 				break;
 
 			case 3:
-				if (startRow - 2 > -1 && startCol + 2 < 8) {
+				if (startRow - 2 > -1 && startCol + 2 < BOARD_DIM) {
 					if (startRow - 2 != prevRow || startCol + 2 != prevCol) {
 						if (this.getPiece(startRow - 1, startCol + 1) != null
 								&& this.getPiece(startRow - 1, startCol + 1).getPlayer() == Player.Black) {
@@ -472,6 +456,8 @@ public class CheckersModel {
 						}
 					}
 				}
+				break;
+			default:
 				break;
 			}
 		}
@@ -488,9 +474,9 @@ public class CheckersModel {
 	 * @return true if there are no remaining pieces of a certain color,
 	 *         otherwise false
 	 */
-	public final boolean isWinner(Player p) {
-		for (int row = 0; row < 8; row++) {
-			for (int col = 0; col < 8; col++) {
+	public final boolean isWinner(final Player p) {
+		for (int row = 0; row < BOARD_DIM; row++) {
+			for (int col = 0; col < BOARD_DIM; col++) {
 				this.piece = this.board[row][col];
 				if (this.piece == null) {
 					continue;
@@ -526,11 +512,14 @@ public class CheckersModel {
 	}
 
 	/**
-	 * helper method that finds the longest jump or jumps if there is a tie and puts them in an ArrayList
-	 * @param jumpList the ArrayList containing the jumps.
+	 * helper method that finds the longest jump or jumps if there is a tie and
+	 * puts them in an ArrayList.
+	 * 
+	 * @param jumpList
+	 *            the ArrayList containing the jumps.
 	 * @return the ArrayList that has the longest jump or jumps.
 	 */
-	public ArrayList<ArrayList<Integer>> findLongestJumps(ArrayList<ArrayList<Integer>> jumpList) {
+	public final ArrayList<ArrayList<Integer>> findLongestJumps(final ArrayList<ArrayList<Integer>> jumpList) {
 		ArrayList<ArrayList<Integer>> newList = new ArrayList<ArrayList<Integer>>();
 		int longest = 0;
 		for (ArrayList<Integer> jumps : jumpList) {
@@ -584,20 +573,26 @@ public class CheckersModel {
 	}
 
 	/**
-	 * Sets a certain piece at a certain location
-	 * @param p the checkers piece
-	 * @param row the row on the board
-	 * @param col the column on the board
+	 * Sets a certain piece at a certain location.
+	 * 
+	 * @param p
+	 *            the checkers piece
+	 * @param row
+	 *            the row on the board
+	 * @param col
+	 *            the column on the board
 	 */
-	public void setPiece(CheckersPiece p, int row, int col) {
+	public final void setPiece(final CheckersPiece p, final int row, final int col) {
 		this.board[row][col] = p;
 	}
 
 	/**
-	 * Method sets the current player
-	 * @param p the new current player
+	 * Method sets the current player.
+	 * 
+	 * @param p
+	 *            the new current player
 	 */
-	public void setPlayer(Player p) {
+	public final void setPlayer(final Player p) {
 		this.player = p;
 	}
 }

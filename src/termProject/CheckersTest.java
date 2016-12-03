@@ -489,28 +489,28 @@ public class CheckersTest {
 		assertEquals(2, (int) loc.get(1).get(2));
 		assertEquals(1, (int) loc.get(1).get(3));
 	}
-	
+
 	@Test
-	public void testSetPiece(){
+	public void testSetPiece() {
 		this.model.setPiece(null, 3, 2);
 		assertEquals(null, this.model.getPiece(3, 2));
 	}
-	
+
 	@Test
-	public void testSetPlayer(){
+	public void testSetPlayer() {
 		this.model.setPlayer(Player.Red);
 		assertEquals(Player.Red, this.model.getCurrentPlayer());
 	}
-	
+
 	@Test
-	public void testCanJump9(){
-		for(int col=0; col<8; col++){
+	public void testCanJump9() {
+		for (int col = 0; col < 8; col++) {
 			this.model.removePiece(5, col);
 		}
 		this.model.movePiece(6, 3, 3, 2);
 		this.model.movePiece(6, 5, 4, 3);
 		this.model.getPiece(3, 2).setKing(true);
-		for(int col=0; col<8; col++){
+		for (int col = 0; col < 8; col++) {
 			this.model.removePiece(2, col);
 		}
 		this.model.movePiece(1, 6, 2, 7);
@@ -520,6 +520,24 @@ public class CheckersTest {
 		this.model.removePiece(0, 1);
 		ArrayList<ArrayList<Integer>> loc = this.model.canJump(Player.Black);
 		assertEquals(1, loc.size());
-		
+	}
+
+	@Test
+	public void testCheckForMoreJumps1() {
+		this.model.movePiece(2, 3, 4, 2);
+		this.model.movePiece(5, 6, 3, 3);
+		this.model.getPiece(4, 2).setKing(true);
+		int[] loc = this.model.checkForMoreJumps(Player.Red, true, 3, 4, 2, 4, 2);
+		assertEquals(2, loc[0]);
+		assertEquals(4, loc[1]);
+	}
+
+	@Test
+	public void testCheckForMoreJumps2() {
+		this.model.movePiece(2, 3, 4, 3);
+		this.model.movePiece(5, 4, 3, 4);
+		int[] loc = this.model.checkForMoreJumps(Player.Red, true, 3, 4, 3, 4, 3);
+		assertEquals(-1, loc[0]);
+		assertEquals(0, loc[1]);
 	}
 }

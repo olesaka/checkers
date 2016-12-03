@@ -1,13 +1,28 @@
 package termProject;
 
+import java.util.ArrayList;
+import java.util.Scanner;
+
+import javax.swing.JFrame;
+import javax.swing.JButton;
+import javax.swing.Icon;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JMenuBar;
+import javax.swing.ImageIcon;
+import javax.swing.JPanel;
+import javax.swing.JFileChooser;
+import javax.swing.BoxLayout;
+import javax.swing.BorderFactory;
+
 import java.awt.Color;
-import java.util.*;
-import java.awt.*;
-import javax.swing.*;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -100,12 +115,29 @@ public class CheckersGUI extends JFrame implements ActionListener {
 	private ArrayList<ArrayList<Integer>> currentJumps;
 
 	// create menu items
-	JMenuBar menus;
-	JMenu fileMenu;
-	JMenuItem newGameItem;
-	JMenuItem saveGameItem;
-	JMenuItem openGameItem;
-
+	/**
+	 * JMenuBar for the menu.
+	 */
+	private JMenuBar menus;
+	/**
+	 * Actual JMenu item for the menu.
+	 */
+	private JMenu fileMenu;
+	/**
+	 * new game menu item.
+	 */
+	private JMenuItem newGameItem;
+	/**
+	 * save game menu item.
+	 */
+	private JMenuItem saveGameItem;
+	/**
+	 * a menu item to resume a saved game.
+	 */
+	private JMenuItem openGameItem;
+	/**
+	 * boolean to determine if a player can jump or not.
+	 */
 	private boolean canJump;
 	/**
 	 * an int denoting dimensions of the board.
@@ -113,13 +145,13 @@ public class CheckersGUI extends JFrame implements ActionListener {
 	private static final int BOARD_DIM = 8;
 
 	/**
-	 * Constructor creates the user board and sets values to the instance.
+	 * Constructor creates the user board and sets values to the instance
 	 * variables.
 	 */
 	public CheckersGUI() {
 		this.board = new JButton[BOARD_DIM][BOARD_DIM];
 		this.piece = null;
-		this.model = new CheckersModel();
+		this.model = null;
 		this.redIcon = new ImageIcon("Red.png");
 		this.blackIcon = new ImageIcon("Black.png");
 		this.blank = new ImageIcon("Blank.png");
@@ -127,13 +159,7 @@ public class CheckersGUI extends JFrame implements ActionListener {
 		this.redKing = new ImageIcon("RedKing.png");
 		this.firstClick = true;
 		this.moves = new int[4];
-		 this.player1 = JOptionPane.showInputDialog(null, "Enter the name of the first player.");
-		 this.player2 = JOptionPane.showInputDialog(null, "Enter the name of the second player.");
-		this.player1 = "Andy";
-		this.player2 = "Nick";
-		 JOptionPane.showMessageDialog(null, player1 + " is Black and " +
-		 player2 + " is Red.");
-		this.currentPlayer = "It is " + player1 + "'s turn.";
+		this.currentPlayer = "Welcome to Checkers";
 		this.canJump = false;
 		this.jumpMoves = new ArrayList<ArrayList<Integer>>();
 		this.jumpRow = 2;
@@ -184,7 +210,8 @@ public class CheckersGUI extends JFrame implements ActionListener {
 		JPanel currentPlayerLabel = new JPanel();
 		this.displayCurrentPlayer = new JLabel(this.currentPlayer);
 		currentPlayerLabel.add(this.displayCurrentPlayer);
-		this.displayBoard();
+		this.disableButtons();
+		this.displayBlankBoard();
 		JPanel big = new JPanel();
 		big.setLayout(new BoxLayout(big, BoxLayout.Y_AXIS));
 		menus.add(fileMenu);
@@ -208,9 +235,9 @@ public class CheckersGUI extends JFrame implements ActionListener {
 	}
 
 	/**
-	 * Helper method for the constructor that sets the icons for the board.
+	 * Displays a new board
 	 */
-	public void displayBoard() {
+	public final void displayBoard() {
 		for (int row = 0; row < BOARD_DIM; row++) {
 			for (int col = 0; col < BOARD_DIM; col++) {
 				this.piece = this.model.getPiece(row, col);
@@ -221,6 +248,39 @@ public class CheckersGUI extends JFrame implements ActionListener {
 				} else {
 					this.board[row][col].setIcon(this.blackIcon);
 				}
+			}
+		}
+	}
+
+	/**
+	 * Displays a blank board
+	 */
+	public final void displayBlankBoard() {
+		for (int row = 0; row < BOARD_DIM; row++) {
+			for (int col = 0; col < BOARD_DIM; col++) {
+				this.board[row][col].setIcon(this.blank);
+			}
+		}
+	}
+
+	/**
+	 * Disables the buttons
+	 */
+	public final void disableButtons() {
+		for (int row = 0; row < BOARD_DIM; row++) {
+			for (int col = 0; col < BOARD_DIM; col++) {
+				this.board[row][col].setEnabled(false);
+			}
+		}
+	}
+
+	/**
+	 * enables the buttons
+	 */
+	public final void enableButtons() {
+		for (int row = 0; row < BOARD_DIM; row++) {
+			for (int col = 0; col < BOARD_DIM; col++) {
+				this.board[row][col].setEnabled(true);
 			}
 		}
 	}
@@ -298,7 +358,7 @@ public class CheckersGUI extends JFrame implements ActionListener {
 	/**
 	 * Resets the board back to its original red and black colors.
 	 */
-	public void resetColors() {
+	public final void resetColors() {
 		for (int row = 0; row < BOARD_DIM; row++) {
 			for (int col = 0; col < BOARD_DIM; col++) {
 				if ((row + col) % 2 == 0) {
@@ -320,14 +380,17 @@ public class CheckersGUI extends JFrame implements ActionListener {
 	public final void actionPerformed(final ActionEvent e) {
 		if (e.getSource() == this.openGameItem) {
 			this.openGame();
+			return;
 		}
 
 		if (e.getSource() == this.saveGameItem) {
 			this.saveGame();
+			return;
 		}
 
 		if (e.getSource() == this.newGameItem) {
 			this.newGame();
+			return;
 		}
 		if (firstClick) {
 			for (int row = 0; row < BOARD_DIM; row++) {
@@ -504,12 +567,20 @@ public class CheckersGUI extends JFrame implements ActionListener {
 			}
 		}
 		if (this.model.isWinner(this.model.getCurrentPlayer())) {
-			if (this.model.getCurrentPlayer() == Player.Black) {
+			if (this.model.getCurrentPlayer() == Player.Red) {
 				JOptionPane.showMessageDialog(null, "Black has Won!");
 			} else {
 				JOptionPane.showMessageDialog(null, "Red has Won!");
 			}
-			this.newGame();
+			int selection = JOptionPane.YES_NO_OPTION;
+			selection = JOptionPane.showConfirmDialog(null, "Would You Like to start a new game?", "Warning",
+					selection);
+			if (selection == JOptionPane.YES_OPTION) {
+				this.newGame();
+			} else {
+				this.displayBlankBoard();
+				this.disableButtons();
+			}
 			return;
 		}
 		this.currentPlayer();
@@ -518,17 +589,15 @@ public class CheckersGUI extends JFrame implements ActionListener {
 	}
 
 	/**
-	 * Creates a new game object so that a new game can be played
+	 * Creates a new game object so that a new game can be played.
 	 */
-	public void newGame() {
+	public final void newGame() {
 		this.model = new CheckersModel();
-		 this.player1 = JOptionPane.showInputDialog(null, "Enter the name of the first player.");
-		 this.player2 = JOptionPane.showInputDialog(null, "Enter the name of the second player.");
-		this.player1 = "Andy";
-		this.player2 = "Nick";
-		 JOptionPane.showMessageDialog(null, player1 + " is Black and " +
-		 player2 + " is Red.");
+		this.player1 = JOptionPane.showInputDialog(null, "Enter the name of the first player.");
+		this.player2 = JOptionPane.showInputDialog(null, "Enter the name of the second player.");
+		JOptionPane.showMessageDialog(null, player1 + " is Black and " + player2 + " is Red.");
 		this.currentPlayer = "It is " + player1 + "'s turn.";
+		this.enableButtons();
 		this.displayBoard();
 		this.currentPlayer();
 		this.displayCurrentPlayer.setText(this.currentPlayer);
@@ -537,9 +606,13 @@ public class CheckersGUI extends JFrame implements ActionListener {
 	}
 
 	/**
-	 * Allows players to save the state of a game to a text file
+	 * Allows players to save the state of a game to a text file.
 	 */
-	public void saveGame() {
+	public final void saveGame() {
+		if (this.model == null) {
+			JOptionPane.showMessageDialog(null, "You must start a new game in order to save it!");
+			return;
+		}
 		// create File Chooser so that it starts at the current directory
 		String userDir = System.getProperty("user.dir");
 		JFileChooser fc = new JFileChooser(userDir);
@@ -600,9 +673,9 @@ public class CheckersGUI extends JFrame implements ActionListener {
 
 	/**
 	 * Allows the players to load a previously played and saved game from a text
-	 * file
+	 * file.
 	 */
-	public void openGame() {
+	public final void openGame() {
 		String playerList = "";
 
 		// create File Chooser so that it starts at the current directory
